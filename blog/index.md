@@ -1,5 +1,6 @@
 ---
 title: Blog
+content_collection: posts
 ---
 
 # Blog
