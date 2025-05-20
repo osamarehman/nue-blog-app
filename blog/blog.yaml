@@ -1,0 +1,2 @@
+include: [ content, cards, motion ]
+content_collection: posts

@@ -1,0 +1,117 @@
+<script>
+  import { model } from '../app/model/index.js'
+</script>
+
+<div @name="user-profile" class="user-profile">
+  <div if="!model.authenticated" class="login-prompt">
+    <p>Please <a href="/auth/login/">log in</a> to view your profile.</p>
+  </div>
+  
+  <div if="model.authenticated" class="profile-container">
+    <div class="profile-header">
+      <img :src="user.avatar || '/img/avatars/default.jpg'" alt="{ user.name }" class="avatar">
+      <h2>{ user.name }</h2>
+      <p>{ user.email }</p>
+    </div>
+    
+    <div class="profile-content">
+      <form @submit.prevent="updateProfile" class="profile-form">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            :value="name" 
+            @input="e => name = e.target.value"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea 
+            id="bio" 
+            name="bio" 
+            :value="bio" 
+            @input="e => bio = e.target.value"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="avatar">Avatar URL</label>
+          <input 
+            type="text" 
+            id="avatar" 
+            name="avatar" 
+            :value="avatar" 
+            @input="e => avatar = e.target.value"
+          >
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" :disabled="isSubmitting">
+            <span if="!isSubmitting">Update Profile</span>
+            <span if="isSubmitting">Updating...</span>
+          </button>
+        </div>
+        
+        <div if="errors.general" class="error-message general">{ errors.general }</div>
+        <div if="success" class="success-message">Profile updated successfully!</div>
+      </form>
+    </div>
+    
+    <div class="profile-footer">
+      <button @click="logout" class="btn-secondary">Logout</button>
+    </div>
+  </div>
+
+  <script>
+    setup() {
+      const user = model.currentUser || {}
+      
+      return {
+        user,
+        name: user.name || '',
+        bio: user.bio || '',
+        avatar: user.avatar || '',
+        errors: {},
+        isSubmitting: false,
+        success: false
+      }
+    }
+    
+    async updateProfile() {
+      this.errors = {}
+      this.success = false
+      this.isSubmitting = true
+      
+      try {
+        await model.updateUser(this.user.id, {
+          name: this.name,
+          bio: this.bio,
+          avatar: this.avatar
+        })
+        
+        this.success = true
+        
+        // Update local user data
+        this.user = {
+          ...this.user,
+          name: this.name,
+          bio: this.bio,
+          avatar: this.avatar
+        }
+      } catch (error) {
+        this.errors.general = error.message || 'Failed to update profile. Please try again.'
+      } finally {
+        this.isSubmitting = false
+      }
+    }
+    
+    async logout() {
+      await model.logout()
+      window.location.href = '/'
+    }
+  </script>
+</div>

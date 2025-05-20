@@ -1,0 +1,21 @@
+{
+  "name": "nue-blog-app",
+  "version": "1.0.0",
+  "description": "A full-featured blog application built with Nuejs",
+  "type": "module",
+  "scripts": {
+    "dev": "nue",
+    "build": "nue build -p",
+    "preview": "nue preview",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.10.0"
+  }
+}

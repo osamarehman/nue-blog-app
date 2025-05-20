@@ -1,0 +1,106 @@
+<script>
+  import { model } from '../app/model/index.js'
+</script>
+
+<div @name="signup-form" class="auth-form">
+  <form @submit.prevent="signup" class="signup-form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input 
+        type="text" 
+        id="name" 
+        name="name" 
+        :value="name" 
+        @input="e => name = e.target.value"
+        required
+      >
+      <div if="errors.name" class="error-message">{ errors.name }</div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        :value="email" 
+        @input="e => email = e.target.value"
+        required
+      >
+      <div if="errors.email" class="error-message">{ errors.email }</div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        :value="password" 
+        @input="e => password = e.target.value"
+        required
+      >
+      <div if="errors.password" class="error-message">{ errors.password }</div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input 
+        type="password" 
+        id="confirmPassword" 
+        name="confirmPassword" 
+        :value="confirmPassword" 
+        @input="e => confirmPassword = e.target.value"
+        required
+      >
+      <div if="errors.confirmPassword" class="error-message">{ errors.confirmPassword }</div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" :disabled="isSubmitting">
+        <span if="!isSubmitting">Sign Up</span>
+        <span if="isSubmitting">Signing up...</span>
+      </button>
+    </div>
+
+    <div if="errors.general" class="error-message general">{ errors.general }</div>
+
+    <div class="form-footer">
+      <p>Already have an account? <a href="/auth/login/">Login</a></p>
+    </div>
+  </form>
+
+  <script>
+    setup() {
+      return {
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        errors: {},
+        isSubmitting: false
+      }
+    }
+
+    async signup() {
+      this.errors = {}
+      
+      // Validate form
+      if (this.password !== this.confirmPassword) {
+        this.errors.confirmPassword = 'Passwords do not match'
+        return
+      }
+      
+      this.isSubmitting = true
+
+      try {
+        await model.signup(this.name, this.email, this.password)
+        window.location.href = '/auth/login/'
+      } catch (error) {
+        this.errors.general = error.message || 'Signup failed. Please try again.'
+      } finally {
+        this.isSubmitting = false
+      }
+    }
+  </script>
+</div>

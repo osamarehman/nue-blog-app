@@ -1,0 +1,71 @@
+<script>
+  import { model } from '../app/model/index.js'
+</script>
+
+<div @name="login-form" class="auth-form">
+  <form @submit.prevent="login" class="login-form">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        :value="email" 
+        @input="e => email = e.target.value"
+        required
+      >
+      <div if="errors.email" class="error-message">{ errors.email }</div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        :value="password" 
+        @input="e => password = e.target.value"
+        required
+      >
+      <div if="errors.password" class="error-message">{ errors.password }</div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" :disabled="isSubmitting">
+        <span if="!isSubmitting">Login</span>
+        <span if="isSubmitting">Logging in...</span>
+      </button>
+    </div>
+
+    <div if="errors.general" class="error-message general">{ errors.general }</div>
+
+    <div class="form-footer">
+      <p>Don't have an account? <a href="/auth/signup/">Sign up</a></p>
+    </div>
+  </form>
+
+  <script>
+    setup() {
+      return {
+        email: '',
+        password: '',
+        errors: {},
+        isSubmitting: false
+      }
+    }
+
+    async login() {
+      this.errors = {}
+      this.isSubmitting = true
+
+      try {
+        await model.login(this.email, this.password)
+        window.location.href = '/'
+      } catch (error) {
+        this.errors.general = error.message || 'Login failed. Please try again.'
+      } finally {
+        this.isSubmitting = false
+      }
+    }
+  </script>
+</div>

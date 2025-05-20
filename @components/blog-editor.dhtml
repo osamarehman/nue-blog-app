@@ -1,0 +1,128 @@
+<script>
+  import { model } from '../app/model/index.js'
+</script>
+
+<div @name="blog-editor" class="blog-editor">
+  <div if="!model.authenticated" class="login-prompt">
+    <p>Please <a href="/auth/login/">log in</a> to create or edit blog posts.</p>
+  </div>
+  
+  <form if="model.authenticated" @submit.prevent="savePost" class="blog-form">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input 
+        type="text" 
+        id="title" 
+        name="title" 
+        :value="title" 
+        @input="e => title = e.target.value"
+        required
+      >
+      <div if="errors.title" class="error-message">{ errors.title }</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="excerpt">Excerpt</label>
+      <textarea 
+        id="excerpt" 
+        name="excerpt" 
+        :value="excerpt" 
+        @input="e => excerpt = e.target.value"
+        required
+      ></textarea>
+      <div if="errors.excerpt" class="error-message">{ errors.excerpt }</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="content">Content (Markdown)</label>
+      <textarea 
+        id="content" 
+        name="content" 
+        :value="content" 
+        @input="e => content = e.target.value"
+        required
+        rows="15"
+      ></textarea>
+      <div if="errors.content" class="error-message">{ errors.content }</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="featuredImage">Featured Image URL</label>
+      <input 
+        type="text" 
+        id="featuredImage" 
+        name="featuredImage" 
+        :value="featuredImage" 
+        @input="e => featuredImage = e.target.value"
+      >
+      <div if="errors.featuredImage" class="error-message">{ errors.featuredImage }</div>
+    </div>
+    
+    <div class="form-group">
+      <label>
+        <input 
+          type="checkbox" 
+          name="published" 
+          :checked="published" 
+          @change="e => published = e.target.checked"
+        >
+        Publish immediately
+      </label>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" :disabled="isSubmitting">
+        <span if="!isSubmitting">Save Post</span>
+        <span if="isSubmitting">Saving...</span>
+      </button>
+    </div>
+    
+    <div if="errors.general" class="error-message general">{ errors.general }</div>
+    <div if="success" class="success-message">Post saved successfully!</div>
+  </form>
+
+  <script>
+    setup() {
+      return {
+        title: this.post?.title || '',
+        excerpt: this.post?.excerpt || '',
+        content: this.post?.content || '',
+        featuredImage: this.post?.featuredImage || '',
+        published: this.post?.published || false,
+        errors: {},
+        isSubmitting: false,
+        success: false
+      }
+    }
+    
+    async savePost() {
+      this.errors = {}
+      this.success = false
+      this.isSubmitting = true
+      
+      try {
+        const postData = {
+          title: this.title,
+          excerpt: this.excerpt,
+          content: this.content,
+          featuredImage: this.featuredImage,
+          published: this.published
+        }
+        
+        if (this.post?.slug) {
+          // Update existing post
+          await model.updateBlog(this.post.slug, postData)
+        } else {
+          // Create new post
+          await model.createBlog(postData)
+        }
+        
+        this.success = true
+      } catch (error) {
+        this.errors.general = error.message || 'Failed to save post. Please try again.'
+      } finally {
+        this.isSubmitting = false
+      }
+    }
+  </script>
+</div>

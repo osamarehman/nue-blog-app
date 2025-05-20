@@ -1,0 +1,69 @@
+<script>
+  import { model } from '../app/model/index.js'
+</script>
+
+<div @name="comment-form" class="comment-form-container">
+  <h3>Leave a Comment</h3>
+  
+  <div if="!model.authenticated" class="login-prompt">
+    <p>Please <a href="/auth/login/">log in</a> to leave a comment.</p>
+  </div>
+  
+  <form if="model.authenticated" @submit.prevent="submitComment" class="comment-form">
+    <div class="form-group">
+      <label for="comment">Comment</label>
+      <textarea 
+        id="comment" 
+        name="comment" 
+        :value="comment" 
+        @input="e => comment = e.target.value"
+        required
+      ></textarea>
+      <div if="errors.comment" class="error-message">{ errors.comment }</div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" :disabled="isSubmitting">
+        <span if="!isSubmitting">Submit Comment</span>
+        <span if="isSubmitting">Submitting...</span>
+      </button>
+    </div>
+
+    <div if="errors.general" class="error-message general">{ errors.general }</div>
+    <div if="success" class="success-message">Your comment has been posted!</div>
+  </form>
+
+  <script>
+    setup() {
+      return {
+        comment: '',
+        errors: {},
+        isSubmitting: false,
+        success: false
+      }
+    }
+
+    async submitComment() {
+      this.errors = {}
+      this.success = false
+      this.isSubmitting = true
+
+      try {
+        await model.createComment({
+          content: this.comment,
+          postId: this.postId
+        })
+        
+        this.success = true
+        this.comment = ''
+        
+        // Emit event to refresh comments
+        this.dispatch('comment-added')
+      } catch (error) {
+        this.errors.general = error.message || 'Failed to post comment. Please try again.'
+      } finally {
+        this.isSubmitting = false
+      }
+    }
+  </script>
+</div>
