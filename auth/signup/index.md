@@ -1,9 +1,9 @@
 ---
-include: [form]
 title: Sign Up
+include: [form]
 ---
 
-# Sign Up
+# Create an Account
 
 [signup-form]
 
