@@ -1,0 +1,29 @@
+/* Card component styles */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  font-size: 1.25rem;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: #1f2937;
+}
+
+.card p {
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.card .button {
+  margin-top: 1rem;
+}

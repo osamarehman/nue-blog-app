@@ -1,21 +1,25 @@
 # yaml-language-server: $schema=https://json.schemastore.org/nuejs-site.json
 
-globals: ["@global"]
-libs: ["@library", "@components"]
+favicon: /img/favicon.jpg
 
+title: Nue Blog / A full-featured blog application
+
+# automatically included
+globals: ["@global", "@app", "controllers", "view"]
+
+# libraries to include from
+libs: ["@components", "@library"]
+
+# globally included components
+include: ["button", "interfaces"]
+
+# enable "turbolinking" & view transitions
 view_transitions: true
 native_css_nesting: true
 inline_css: true
 sections: true
 
-title_template: "Nue Blog / %s"
-og_image: /img/og_image.png
-author: Nue Blog
-favicon: /img/favicon.jpg
-description: A full-featured blog application built with Nuejs
-
-# Define content collection globally
-content_collection: posts
+port: 8080
 
 navigation:
   header:

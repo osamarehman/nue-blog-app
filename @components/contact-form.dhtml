@@ -1,86 +1,18 @@
-<script>
-  import { model } from '../app/model/index.js'
-</script>
+<form @name="contact-form" class="contact-form">
+  <label>
+    <span>Your name</span>
+    <input type="text" name="name" required>
+  </label>
 
-<div @name="contact-form" class="contact-form-container">
-  <form @submit.prevent="submit" class="contact-form">
-    <div class="form-group">
-      <label for="name">Name</label>
-      <input 
-        type="text" 
-        id="name" 
-        name="name" 
-        :value="name" 
-        @input="(e) => name = e.target.value"
-        required
-      >
-      <div if="errors.name" class="error-message">{ errors.name }</div>
-    </div>
+  <label>
+    <span>Your email</span>
+    <input type="email" name="email" required>
+  </label>
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input 
-        type="email" 
-        id="email" 
-        name="email" 
-        :value="email" 
-        @input="(e) => email = e.target.value"
-        required
-      >
-      <div if="errors.email" class="error-message">{ errors.email }</div>
-    </div>
+  <label>
+    <span>Message</span>
+    <textarea name="message" required></textarea>
+  </label>
 
-    <div class="form-group">
-      <label for="message">Message</label>
-      <textarea 
-        id="message" 
-        name="message" 
-        :value="message" 
-        @input="(e) => message = e.target.value"
-        required
-      ></textarea>
-      <div if="errors.message" class="error-message">{ errors.message }</div>
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" class="btn-primary" :disabled="isSubmitting">
-        <span if="!isSubmitting">Send Message</span>
-        <span if="isSubmitting">Sending...</span>
-      </button>
-    </div>
-
-    <div if="errors.general" class="error-message general">{ errors.general }</div>
-    <div if="success" class="success-message">Your message has been sent successfully!</div>
-  </form>
-
-  <script>
-    setup() {
-      return {
-        name: '',
-        email: '',
-        message: '',
-        errors: {},
-        isSubmitting: false,
-        success: false
-      }
-    }
-
-    async submit() {
-      this.errors = {}
-      this.success = false
-      this.isSubmitting = true
-
-      try {
-        await model.submitContactForm(this.name, this.email, this.message)
-        this.success = true
-        this.name = ''
-        this.email = ''
-        this.message = ''
-      } catch (error) {
-        this.errors.general = error.message || 'Failed to send message. Please try again.'
-      } finally {
-        this.isSubmitting = false
-      }
-    }
-  </script>
-</div>
+  <button type="submit">Send Message</button>
+</form>

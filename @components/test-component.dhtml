@@ -1,0 +1,12 @@
+<div @name="test-component">
+  <h2>Test Component</h2>
+  <p>If you can see this, components are working correctly!</p>
+
+  <script>
+    setup() {
+      return {
+        message: 'Hello from the test component!'
+      }
+    }
+  </script>
+</div>
