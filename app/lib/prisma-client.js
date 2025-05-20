@@ -45,7 +45,7 @@ const posts = [
 ];
 
 // Mock database for comments
-const comments = [
+let commentsList = [
   {
     id: 1,
     content: 'Great article!',
@@ -150,7 +150,7 @@ export function createPrismaClient() {
         if (include && include.comments) {
           post = {
             ...post,
-            comments: comments.filter(comment => comment.postId === post.id)
+            comments: commentsList.filter(comment => comment.postId === post.id)
           };
         }
         
@@ -196,14 +196,14 @@ export function createPrismaClient() {
         posts.splice(postIndex, 1);
         
         // Also delete related comments
-        comments = comments.filter(comment => comment.postId !== deletedPost.id);
+        commentsList = commentsList.filter(comment => comment.postId !== deletedPost.id);
         
         return deletedPost;
       }
     },
     comment: {
       findMany: async ({ where }) => {
-        let filteredComments = [...comments];
+        let filteredComments = [...commentsList];
         
         if (where && where.postId) {
           filteredComments = filteredComments.filter(comment => comment.postId === where.postId);
@@ -213,24 +213,23 @@ export function createPrismaClient() {
       },
       create: async ({ data }) => {
         const newComment = {
-          id: comments.length + 1,
+          id: commentsList.length + 1,
           ...data,
           createdAt: new Date(),
           updatedAt: new Date()
         };
-        comments.push(newComment);
+        commentsList.push(newComment);
         return newComment;
       },
       delete: async ({ where }) => {
-        const commentIndex = comments.findIndex(comment => comment.id === where.id);
+        const commentIndex = commentsList.findIndex(comment => comment.id === where.id);
         if (commentIndex === -1) return null;
         
-        const deletedComment = comments[commentIndex];
-        comments.splice(commentIndex, 1);
+        const deletedComment = commentsList[commentIndex];
+        commentsList.splice(commentIndex, 1);
         
         return deletedComment;
       }
     }
   };
 }
-

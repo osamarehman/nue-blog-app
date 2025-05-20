@@ -1,128 +1,156 @@
-<script>
-  import { model } from '../app/model/index.js'
-</script>
-
 <div @name="blog-editor" class="blog-editor">
-  <div if="!model.authenticated" class="login-prompt">
-    <p>Please <a href="/auth/login/">log in</a> to create or edit blog posts.</p>
-  </div>
-  
-  <form if="model.authenticated" @submit.prevent="savePost" class="blog-form">
+  <form @submit.prevent="submitPost">
     <div class="form-group">
       <label for="title">Title</label>
-      <input 
-        type="text" 
-        id="title" 
-        name="title" 
-        :value="title" 
-        @input="e => title = e.target.value"
-        required
-      >
-      <div if="errors.title" class="error-message">{ errors.title }</div>
+      <input type="text" id="title" :value="title" @input="e => title = e.target.value" required>
     </div>
-    
+
     <div class="form-group">
-      <label for="excerpt">Excerpt</label>
-      <textarea 
-        id="excerpt" 
-        name="excerpt" 
-        :value="excerpt" 
-        @input="e => excerpt = e.target.value"
-        required
-      ></textarea>
-      <div if="errors.excerpt" class="error-message">{ errors.excerpt }</div>
+      <label for="description">Description</label>
+      <input type="text" id="description" :value="description" @input="e => description = e.target.value" required>
     </div>
-    
+
     <div class="form-group">
       <label for="content">Content (Markdown)</label>
-      <textarea 
-        id="content" 
-        name="content" 
-        :value="content" 
-        @input="e => content = e.target.value"
-        required
-        rows="15"
-      ></textarea>
-      <div if="errors.content" class="error-message">{ errors.content }</div>
+      <textarea id="content" :value="content" @input="e => content = e.target.value" rows="10" required></textarea>
     </div>
-    
+
     <div class="form-group">
-      <label for="featuredImage">Featured Image URL</label>
-      <input 
-        type="text" 
-        id="featuredImage" 
-        name="featuredImage" 
-        :value="featuredImage" 
-        @input="e => featuredImage = e.target.value"
-      >
-      <div if="errors.featuredImage" class="error-message">{ errors.featuredImage }</div>
+      <label for="image">Featured Image URL</label>
+      <input type="text" id="image" :value="image" @input="e => image = e.target.value">
     </div>
-    
-    <div class="form-group">
-      <label>
-        <input 
-          type="checkbox" 
-          name="published" 
-          :checked="published" 
-          @change="e => published = e.target.checked"
-        >
-        Publish immediately
-      </label>
-    </div>
-    
+
     <div class="form-actions">
-      <button type="submit" class="btn-primary" :disabled="isSubmitting">
-        <span if="!isSubmitting">Save Post</span>
-        <span if="isSubmitting">Saving...</span>
-      </button>
+      <button type="submit" class="btn primary">Publish Post</button>
+      <button type="button" class="btn" @click="cancel">Cancel</button>
     </div>
-    
-    <div if="errors.general" class="error-message general">{ errors.general }</div>
-    <div if="success" class="success-message">Post saved successfully!</div>
   </form>
 
+  <div class="message" :class="{ success: success, error: !success }" :if="message">
+    { message }
+  </div>
+
   <script>
-    setup() {
-      return {
-        title: this.post?.title || '',
-        excerpt: this.post?.excerpt || '',
-        content: this.post?.content || '',
-        featuredImage: this.post?.featuredImage || '',
-        published: this.post?.published || false,
-        errors: {},
-        isSubmitting: false,
-        success: false
+    import { model } from '../app/model/index.js'
+
+    constructor() {
+      this.title = ''
+      this.description = ''
+      this.content = ''
+      this.image = '/img/blog/default.jpg'
+      this.message = ''
+      this.success = false
+    }
+
+    async submitPost() {
+      if (!model.authenticated) {
+        this.message = 'You must be logged in to create a post'
+        this.success = false
+        return
+      }
+
+      try {
+        const slug = this.title
+          .toLowerCase()
+          .replace(/[^\w\s]/gi, '')
+          .replace(/\s+/g, '-')
+
+        const post = await model.createBlog({
+          title: this.title,
+          description: this.description,
+          content: this.content,
+          slug,
+          image: this.image,
+          published: true
+        })
+
+        this.message = 'Post published successfully!'
+        this.success = true
+        
+        // Reset form
+        this.title = ''
+        this.description = ''
+        this.content = ''
+        this.image = '/img/blog/default.jpg'
+        
+        // Redirect after a short delay
+        setTimeout(() => {
+          window.location.href = `/blog/${slug}/`
+        }, 2000)
+      } catch (error) {
+        this.message = `Error: ${error.message}`
+        this.success = false
       }
     }
-    
-    async savePost() {
-      this.errors = {}
-      this.success = false
-      this.isSubmitting = true
-      
-      try {
-        const postData = {
-          title: this.title,
-          excerpt: this.excerpt,
-          content: this.content,
-          featuredImage: this.featuredImage,
-          published: this.published
-        }
-        
-        if (this.post?.slug) {
-          // Update existing post
-          await model.updateBlog(this.post.slug, postData)
-        } else {
-          // Create new post
-          await model.createBlog(postData)
-        }
-        
-        this.success = true
-      } catch (error) {
-        this.errors.general = error.message || 'Failed to save post. Please try again.'
-      } finally {
-        this.isSubmitting = false
-      }
+
+    cancel() {
+      window.location.href = '/blog/'
     }
   </script>
+
+  <style>
+    .blog-editor {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      font-family: monospace;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      background: #eee;
+    }
+
+    .btn.primary {
+      background: #0066cc;
+      color: white;
+    }
+
+    .message {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 4px;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
 </div>
+

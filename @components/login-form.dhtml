@@ -1,71 +1,117 @@
-<script>
-  import { model } from '../app/model/index.js'
-</script>
-
 <div @name="login-form" class="auth-form">
-  <form @submit.prevent="login" class="login-form">
+  <form @submit.prevent="login">
     <div class="form-group">
       <label for="email">Email</label>
-      <input 
-        type="email" 
-        id="email" 
-        name="email" 
-        :value="email" 
-        @input="e => email = e.target.value"
-        required
-      >
-      <div if="errors.email" class="error-message">{ errors.email }</div>
+      <input type="email" id="email" :value="email" @input="e => email = e.target.value" required>
     </div>
 
     <div class="form-group">
       <label for="password">Password</label>
-      <input 
-        type="password" 
-        id="password" 
-        name="password" 
-        :value="password" 
-        @input="e => password = e.target.value"
-        required
-      >
-      <div if="errors.password" class="error-message">{ errors.password }</div>
+      <input type="password" id="password" :value="password" @input="e => password = e.target.value" required>
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn-primary" :disabled="isSubmitting">
-        <span if="!isSubmitting">Login</span>
-        <span if="isSubmitting">Logging in...</span>
-      </button>
+      <button type="submit" class="btn primary">Login</button>
     </div>
-
-    <div if="errors.general" class="error-message general">{ errors.general }</div>
 
     <div class="form-footer">
       <p>Don't have an account? <a href="/auth/signup/">Sign up</a></p>
     </div>
   </form>
 
+  <div class="message" :class="{ success: success, error: !success }" :if="message">
+    { message }
+  </div>
+
   <script>
-    setup() {
-      return {
-        email: '',
-        password: '',
-        errors: {},
-        isSubmitting: false
-      }
+    import { model } from '../app/model/index.js'
+
+    constructor() {
+      this.email = ''
+      this.password = ''
+      this.message = ''
+      this.success = false
     }
 
     async login() {
-      this.errors = {}
-      this.isSubmitting = true
-
       try {
         await model.login(this.email, this.password)
-        window.location.href = '/'
+        this.message = 'Login successful!'
+        this.success = true
+        
+        // Redirect after a short delay
+        setTimeout(() => {
+          window.location.href = '/'
+        }, 1000)
       } catch (error) {
-        this.errors.general = error.message || 'Login failed. Please try again.'
-      } finally {
-        this.isSubmitting = false
+        this.message = `Error: ${error.message}`
+        this.success = false
       }
     }
   </script>
+
+  <style>
+    .auth-form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .form-actions {
+      margin-top: 2rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn.primary {
+      background: #0066cc;
+      color: white;
+    }
+
+    .form-footer {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .message {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 4px;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
 </div>
+
