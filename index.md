@@ -1,6 +1,6 @@
 ---
 include: [ gallery, motion ]
-content_collection: blog
+content_collection: posts
 ---
 
 # Welcome to Nue Blog

@@ -11,7 +11,7 @@
         id="name" 
         name="name" 
         :value="name" 
-        @input="e => name = e.target.value"
+        @input="(e) => name = e.target.value"
         required
       >
       <div if="errors.name" class="error-message">{ errors.name }</div>
@@ -24,7 +24,7 @@
         id="email" 
         name="email" 
         :value="email" 
-        @input="e => email = e.target.value"
+        @input="(e) => email = e.target.value"
         required
       >
       <div if="errors.email" class="error-message">{ errors.email }</div>
@@ -36,7 +36,7 @@
         id="message" 
         name="message" 
         :value="message" 
-        @input="e => message = e.target.value"
+        @input="(e) => message = e.target.value"
         required
       ></textarea>
       <div if="errors.message" class="error-message">{ errors.message }</div>
