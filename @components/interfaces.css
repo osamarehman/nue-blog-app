@@ -8,13 +8,71 @@
   margin: 2rem 0;
 }
 
+/* Define specific grid layouts */
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 1024px) {
+  .grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-3, .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid, .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Section layout */
 section {
-  margin: 3rem 0;
+  margin: 4rem 0;
+  padding: 2rem 0;
+}
+
+section.alt {
+  background-color: var(--color-base-200);
+  margin-left: -2rem;
+  margin-right: -2rem;
+  padding: 3rem 2rem;
 }
 
 section h2 {
   margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--color-primary);
+}
+
+section.hero {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+section.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+section.hero p {
+  font-size: 1.25rem;
+  max-width: 800px;
+  margin: 0 auto 2rem auto;
 }
 
 /* Image container */
@@ -26,12 +84,84 @@ section h2 {
 .image-container img {
   max-width: 100%;
   height: auto;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-box);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .image-caption {
   margin-top: 0.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-light);
 }
+
+/* Flex layouts */
+.flex {
+  display: flex;
+  gap: 2rem;
+}
+
+.flex.center {
+  align-items: center;
+  justify-content: center;
+}
+
+.flex.space-between {
+  justify-content: space-between;
+}
+
+.flex.column {
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .flex {
+    flex-direction: column;
+  }
+}
+
+/* Stack layout */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.container.narrow {
+  max-width: 800px;
+}
+
+.container.wide {
+  max-width: 1400px;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-8 { margin-top: 2rem; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-8 { margin-bottom: 2rem; }

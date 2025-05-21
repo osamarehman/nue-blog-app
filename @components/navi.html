@@ -1,0 +1,45 @@
+<nav @name="navi" class="navi">
+  <a v-for="item in items" :href="item.url || item.href" :data-key="item.title || Object.keys(item)[0]">
+    <img v-if="item.image" :src="item.image" :width="item.size?.split(' x ')[0]" :height="item.size?.split(' x ')[1]" :alt="item.alt">
+    <span v-if="!item.image">{{ item.title || Object.keys(item)[0] }}</span>
+  </a>
+</nav>
+
+<script>
+export default {
+  props: ['items'],
+  mounted() {
+    // Set current page in navigation
+    const currentPath = window.location.pathname
+    const links = this.$el.querySelectorAll('a')
+
+    links.forEach(link => {
+      const href = link.getAttribute('href')
+      if (href === currentPath ||
+          (href !== '/' && currentPath.startsWith(href)) ||
+          (href === '/' && currentPath === '/')) {
+        link.setAttribute('aria-current', 'page')
+      }
+    })
+  },
+  watch: {
+    items: {
+      handler(newItems) {
+        this.updateLinks(newItems);
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    updateLinks(items) {
+      const links = this.$el.querySelectorAll('a');
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+        if (items.some(item => item.url === href)) {
+          link.setAttribute('aria-current', 'page');
+        }
+      });
+    }
+  }
+};
+</script>

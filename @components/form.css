@@ -1,50 +1,113 @@
-/* Basic form styling */
+/* Form component styles */
 form {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 2rem auto;
 }
 
+/* Form groups */
+.form-group, form > div {
+  margin-bottom: 1.5rem;
+}
+
+/* Labels */
 label {
   display: block;
-  margin-bottom: 1em;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text);
 }
 
 label span {
-  font-weight: 500;
-  margin-bottom: 0.3em;
   display: block;
+  margin-bottom: 0.3rem;
 }
 
-input, textarea {
-  border: 1px solid #e5e7eb;
-  font-family: inherit;
-  font-size: inherit;
-  padding: 0.7em 1em;
-  border-radius: 4px;
+/* Form controls */
+input,
+textarea,
+select {
   width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  border: var(--border) solid var(--color-base-300);
+  border-radius: var(--radius-field);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px oklch(45% 0.24 277.023 / 0.2);
+}
+
+/* Textarea specific */
 textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
 }
 
-button {
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* Checkboxes and radios */
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  margin-right: 0.5rem;
 }
 
-button:hover {
-  background-color: #2563eb;
+/* Form validation */
+input:invalid,
+textarea:invalid,
+select:invalid {
+  border-color: var(--color-error);
 }
 
-.contact-form {
+/* Form feedback */
+.form-feedback {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-feedback.error {
+  color: var(--color-error);
+}
+
+.form-feedback.success {
+  color: var(--color-success);
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
   margin-top: 2rem;
+}
+
+/* Contact form specific */
+.contact-form {
+  background-color: var(--color-base-200);
+  padding: 2rem;
+  border-radius: var(--radius-box);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  form {
+    padding: 0 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button,
+  .form-actions .button {
+    width: 100%;
+  }
 }
